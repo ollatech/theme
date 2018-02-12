@@ -1,7 +1,7 @@
 <?php
 namespace Olla\Theme\Resolver;
 
-use Olla\Prisma\MetadataInterface;
+use Olla\Prisma\Metadata;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class ViewResolver implements Resolver
