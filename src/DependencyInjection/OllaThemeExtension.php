@@ -26,8 +26,7 @@ final class OllaThemeExtension extends Extension implements PrependExtensionInte
     {
         $this->reconfig($configs, $container);
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Themes/config'));
-        //$loader->load('collection.xml');
-     
+        $loader->load('theme.xml');
     }
     private function reconfig(array $configs, ContainerBuilder $container) {
         $configuration = new Configuration();
