@@ -1,6 +1,8 @@
 <?php
 namespace Olla\Theme;
 
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class View {
 	
