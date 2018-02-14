@@ -25,12 +25,11 @@ final class View {
     public function operation(string $carrier, string $operationId) {
     	switch ($carrier) {
     		case 'restapi':
-    			return $this->metadata->operation($carrier, $operationId);
+    			return $this->metadata->operation($operationId);
     		case 'admin':
-    			return $this->metadata->admin($carrier, $operationId);
+    			return $this->metadata->admin($operationId);
     		case 'frontend':
-    		print_r($this->metadata->frontends());
-    			return $this->metadata->frontend($carrier, $operationId);
+    			return $this->metadata->frontend($operationId);
     		default:
     			break;
     	}
