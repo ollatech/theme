@@ -23,6 +23,6 @@ final class Design {
 
 	public function get(string $carrier, string $template) {
 		$design = $this->theme;
-		return $this->container->getParameter('kernel.project_dir').'/design/'.$carrier.'/'.$design.'/'.$template;
+		return $this->container->getParameter('kernel.project_dir').'/design/'.$carrier.'/'.$design.'/'.$template.'.html.twig';
 	}
 }
