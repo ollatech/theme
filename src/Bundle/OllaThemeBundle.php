@@ -1,5 +1,5 @@
 <?php
-namespace Olla\Theme;
+namespace Olla\Theme\Bundle;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
