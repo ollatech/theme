@@ -36,5 +36,6 @@ final class View {
     		default:
     			break;
     	}
+    	echo "error";
     }
 }
