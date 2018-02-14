@@ -12,7 +12,7 @@ final class Design {
 	protected $container;
 	protected $twig;
 	protected $finder;
-	protected $designs;
+	
 	
 
 	public function __construct(ContainerInterface $container, TwigEnvironment $twig, Finder $finder) {
