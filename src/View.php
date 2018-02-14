@@ -8,11 +8,13 @@ use Olla\Theme\Metadata;
 final class View {
 	
 	protected $design;
+	
 	public function __construct(Design $design, Metadata $metadata) {
 		$this->design = $design;
 	}
-	
-    public function render(string $format, array $data, string $operationId) {
-        return new JsonResponse(['hai' => $operationId]);
+
+    public function render(array $args = [], array $response = []) {
+        return new JsonResponse($args);
     }
+
 }
