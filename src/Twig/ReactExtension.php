@@ -21,7 +21,7 @@ class ReactExtension extends \Twig_Extension
      * @param array  $options
      *
      * @return string
-     */
+    */ 
     public function render()
     {
         $str = '';
