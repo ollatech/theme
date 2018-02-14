@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 	<services>
 		<service id="Olla\Theme\View" class="Olla\Theme\View">
-			<argument type="service" id="Olla\Theme\Bundle\Design" />
+			<argument type="service" id="Olla\Theme\Design" />
 			<argument type="service" id="olla.metadata" />
 			<tag name="olla.format" alias="html" />
 		</service>
