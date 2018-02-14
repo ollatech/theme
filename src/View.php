@@ -7,6 +7,7 @@ use Twig\Environment as TwigEnvironment;
 use Olla\Prisma\Metadata;
 
 final class View {
+    
     protected $twig;
 	protected $design;
 	protected $metadata;
