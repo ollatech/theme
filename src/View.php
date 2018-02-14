@@ -18,7 +18,23 @@ final class View {
 
     public function render(array $args = [], array $response = []) {
     	print_r($args);
-    	$operation = $this->metadata->operation($args['operation_id']);
+    	$operation = $this->operation($args['carrier'], $args['operation_id']);
         return new JsonResponse($operation);
+    }
+
+    public function operation(string $carrier, string $operationId) {
+    	switch ($carrier) {
+    		case 'restapi':
+    			return $this->metadata->operation($carrier, $operationId);
+    			break;
+    		case 'admin':
+    			return $this->metadata->frontend($carrier, $operationId);
+    			break;
+    		case 'frontend':
+    			return $this->metadata->admin($carrier, $operationId);
+    			break;
+    		default:
+    			break;
+    	}
     }
 }
