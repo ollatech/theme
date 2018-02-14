@@ -7,6 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Finder\Finder;
 
 final class Design {
+	
 	protected $container;
 	protected $twig;
 	protected $finder;
@@ -25,11 +26,9 @@ final class Design {
 	}
 
 	public function template(string $design, string $template) {
-
 		if(!isset($this->designs[$design])) {
 			throw new \Exception(sprintf('%s theme context not available', $design));
 		}
 		return $this->container->getParameter('kernel.project_dir').'/design/'.$design.'/'.$template;
 	}
-
 }
