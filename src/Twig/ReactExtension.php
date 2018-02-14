@@ -22,10 +22,15 @@ class ReactExtension extends \Twig_Extension
      *
      * @return string
     */ 
-    public function render()
+    public function render(string $js = null, array $props = [])
     {
+        $data = array(
+            'props' => $props,
+            'dom_id' => 'sfreact-'.uniqid('reactRenderer', true)
+        );
+
         $str = '';
-        $str .= '<div id="sdfsdfdsf">';
+        $str .= '<div id="'.$data['dom_id'].'">';
         $str = 'sdfdsfdsfdsfdf';
         $str .= '</div>';
         return $str;
