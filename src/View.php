@@ -28,10 +28,10 @@ final class View {
     			return $this->metadata->operation($carrier, $operationId);
     			break;
     		case 'admin':
-    			return $this->metadata->frontend($carrier, $operationId);
+    			return $this->metadata->admin($carrier, $operationId);
     			break;
     		case 'frontend':
-    			return $this->metadata->admin($carrier, $operationId);
+    			return $this->metadata->frontend($carrier, $operationId);
     			break;
     		default:
     			break;
