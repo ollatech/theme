@@ -26,13 +26,11 @@ final class View {
     	switch ($carrier) {
     		case 'restapi':
     			return $this->metadata->operation($carrier, $operationId);
-    			break;
     		case 'admin':
     			return $this->metadata->admin($carrier, $operationId);
-    			break;
     		case 'frontend':
+    		print_r($this->metadata->frontends());
     			return $this->metadata->frontend($carrier, $operationId);
-    			break;
     		default:
     			break;
     	}
