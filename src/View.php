@@ -17,6 +17,7 @@ final class View {
 	}
 
     public function render(array $args = [], array $response = []) {
+    	print_r($args);
     	$operation = $this->metadata->operation($args['operation_id']);
         return new JsonResponse($operation);
     }
