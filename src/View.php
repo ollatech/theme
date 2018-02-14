@@ -7,7 +7,7 @@ use Twig\Environment as TwigEnvironment;
 use Olla\Prisma\Metadata;
 
 final class View {
-	
+
 	protected $design;
 	protected $metadata;
 	
@@ -17,6 +17,7 @@ final class View {
 	}
 
     public function render(array $args = [], array $response = []) {
-        return new JsonResponse($args);
+    	$operation = $this->metadata->operation($args['operation_id']);
+        return new JsonResponse($operation);
     }
 }
