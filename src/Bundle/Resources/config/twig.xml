@@ -7,5 +7,8 @@
         <service id="olla.render_extension" class="Olla\Theme\Twig\ReactExtension">
             <tag name="twig.extension" />
         </service>
+        <service id="olla.theme_extension" class="Olla\Theme\Twig\ThemeExtension">
+            <tag name="twig.extension" />
+        </service>
     </services>
 </container>

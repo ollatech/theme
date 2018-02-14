@@ -3,7 +3,7 @@
 namespace Olla\Theme\Twig;
 
 
-class ReactExtension extends \Twig_Extension
+class ThemeExtension extends \Twig_Extension
 {
     /**
     * @return array
@@ -11,7 +11,9 @@ class ReactExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('react_render', array($this, 'render'), array('is_safe' => array('html')))
+            new \Twig_SimpleFunction('layout', array($this, 'js'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('theme_js', array($this, 'js'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('theme_css', array($this, 'css'), array('is_safe' => array('html')))
         );
     }
 
@@ -40,6 +42,6 @@ class ReactExtension extends \Twig_Extension
      */
     public function getName()
     {
-        return 'react_render_extension';
+        return 'theme_extension';
     }
 }
