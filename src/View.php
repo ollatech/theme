@@ -17,14 +17,7 @@ final class View {
 		$this->metadata = $metadata;
 	}
 
-    /**
-     * Design
-     * response = {
-     *     'css' => '',
-     *     'js' => '',
-     *     'data' => []
-     * }
-     */
+    
 
     public function render(array $args = [], array $response = []) {
         $operationId = $args['operation_id'];
@@ -41,7 +34,7 @@ final class View {
         $design  = $this->design->get($carrier, $template, $js);
 
         $data = [
-            'js' => $js
+            'js' => $js,
             'data' => $response
         ];
 
