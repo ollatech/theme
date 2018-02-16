@@ -43,7 +43,6 @@ final class View {
         return  Response::create($template);
     }
 
-
     public function operation(string $carrier, string $operationId) {
     	switch ($carrier) {
     		case 'restapi':

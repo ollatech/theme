@@ -14,7 +14,6 @@ final class Design {
 	protected $finder;
 	
 	
-
 	public function __construct(ContainerInterface $container, TwigEnvironment $twig, Finder $finder) {
 		$this->container = $container;
 		$this->twig = $twig;
