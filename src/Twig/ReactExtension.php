@@ -23,7 +23,7 @@ class ReactExtension extends \Twig_Extension
         );
     }
 
-    public function render(string $name, $props, $context, $file) {
+    public function render(string $name, $props = [], $context = [], string $file = null) {
         $dom_id = 'sfreact-'.uniqid('reactRenderer', true);
         $str = '';
         $str .= '<div id="'.$dom_id.'"></div>';
@@ -48,6 +48,9 @@ class ReactExtension extends \Twig_Extension
     $domId, $name, $props, $context);
 })();
 JS;
-        return $wrapperJs;
+return sprintf('<script type="application/json" >%s</script>',
+                $wrapperJs
+            );
+        
     }
 }
