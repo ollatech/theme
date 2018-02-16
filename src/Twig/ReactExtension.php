@@ -48,7 +48,7 @@ class ReactExtension extends \Twig_Extension
     $domId, $name, $props, $context);
 })();
 JS;
-return sprintf('<script type="application/json" >%s</script>',
+return sprintf('<script >%s</script>',
                 $wrapperJs
             );
         
