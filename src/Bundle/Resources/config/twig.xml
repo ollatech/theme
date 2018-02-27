@@ -3,9 +3,43 @@
 <container xmlns="http://symfony.com/schema/dic/services"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="ollap_theme.filesystem_loader.class">Olla\Theme\Twig\ThemeLoader</parameter>
+    </parameters>
     <services>
         <service id="olla.render_extension" class="Olla\Theme\Twig\ReactExtension">
             <tag name="twig.extension" />
+        </service>
+        <service id="olla_theme.templating.cache_warmer.template_paths" class="Olla\Theme\Cache\TemplatePathsCacheWarmer" public="false">
+            <argument type="service" id="templating.finder" />
+            <argument type="service" id="olla_theme.templating_locator" />
+            <argument type="service" id="olla_theme.active_theme" />
+        </service>
+
+        <service id="templating.finder" class="Olla\Theme\Cache\TemplateFinder" public="false">
+            <argument type="service" id="kernel" />
+            <argument type="service" id="templating.filename_parser" />
+            <argument>%kernel.project_dir%/templates</argument>
+            <argument type="service" id="olla_theme.active_theme"/>
+        </service>
+
+        <service id="olla_theme.templating_locator" class="Olla\Theme\Locator\TemplateLocator" public="false">
+            <argument type="service" id="olla_theme.file_locator" />
+            <argument>%kernel.cache_dir%</argument>
+            <argument type="service" id="olla_theme.active_theme" />
+        </service>
+
+        <service id="olla_theme.file_locator" class="Olla\Theme\Locator\FileLocator" public="false">
+            <argument type="service" id="kernel" />
+            <argument type="service" id="olla_theme.active_theme" />
+            <argument>%kernel.project_dir%/templates</argument>
+            <argument type="collection" />
+            <argument>%olla_theme.path_patterns%</argument>
+        </service>
+
+        <service id="olla_theme.active_theme" class="Olla\Theme\ActiveTheme">
+            <argument>%olla_theme.active_theme%</argument>
+            <argument>%olla_theme.themes%</argument>
         </service>
       
     </services>

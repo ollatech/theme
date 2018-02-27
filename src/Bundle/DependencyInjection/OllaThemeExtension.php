@@ -20,7 +20,7 @@ final class OllaThemeExtension extends Extension implements PrependExtensionInte
 {
     public function prepend(ContainerBuilder $container)
     {
-       
+
     }
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -30,8 +30,33 @@ final class OllaThemeExtension extends Extension implements PrependExtensionInte
         $loader->load('twig.xml');
     }
     private function reconfig(array $configs, ContainerBuilder $container) {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
 
+        $config = $this->processConfiguration(new Configuration(), $configs);
+        foreach (array('themes', 'active_theme', 'path_patterns', 'cache_warming') as $key) {
+            $container->setParameter($this->getAlias().'.'.$key, $config[$key]);
+        }
+        
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $options = null;
+        if (!empty($config['cookie']['name'])) {
+            $options = array();
+            foreach (array('name', 'lifetime', 'path', 'domain', 'secure', 'http_only') as $key) {
+                $options[$key] = $config['cookie'][$key];
+            }
+        }
+
+        $container->setParameter($this->getAlias().'.cookie', $options);
+       
+        if (!empty($config['device_detection'])) {
+            $container->setAlias('liip_theme.theme_auto_detect', $config['device_detection']);
+        }
+        if (!empty($config['autodetect_theme'])) {
+            $id = is_string($config['autodetect_theme']) ? $config['autodetect_theme'] : 'liip_theme.theme_auto_detect';
+            $container->getDefinition($this->getAlias().'.theme_request_listener')
+            ->addArgument(new Reference($id));
+        }
+        if (true === $config['assetic_integration']) {
+            $container->setParameter('liip_theme.assetic_integration', true);
+        }
     }
 }
