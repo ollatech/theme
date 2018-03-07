@@ -5,8 +5,7 @@ namespace Olla\Theme\Locator;
 
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Config\FileLocator as BaseFileLocator;
-use Olla\Theme\ActiveTheme;
-
+use Olla\Theme\Theme;
 
 class FileLocator extends BaseFileLocator
 {
@@ -14,37 +13,21 @@ class FileLocator extends BaseFileLocator
     protected $path;
     protected $basePaths = array();
     protected $pathPatterns;
+    protected $theme;
 
-    /**
-     * @var ActiveTheme
-     */
-    protected $activeTheme;
 
-    /**
-     * @var string
-     */
-    protected $lastTheme;
 
-    /**
-     * Constructor.
-     *
-     * @param KernelInterface $kernel       A KernelInterface instance
-     * @param ActiveTheme     $activeTheme  A ActiveTheme instance
-     * @param string|null     $path         Path
-     * @param array           $paths        Base paths
-     * @param array           $pathPatterns Fallback paths pattern
-     */
     public function __construct(
         KernelInterface $kernel,
-        ActiveTheme $activeTheme,
         $path = null,
         array $paths = array(),
-        array $pathPatterns = array()
+        array $pathPatterns = array(),
+        Theme $theme
     ) {
         $this->kernel = $kernel;
-        $this->activeTheme = $activeTheme;
         $this->path = $path;
         $this->basePaths = $paths;
+        $this->theme = $theme;
 
         $defaultPathPatterns = array(
             'app_resource' => array(
@@ -60,7 +43,6 @@ class FileLocator extends BaseFileLocator
             ),
         );
         $this->pathPatterns = array_merge_recursive(array_filter($pathPatterns), $defaultPathPatterns);
-        $this->lastTheme = $this->activeTheme->getName();
         parent::__construct(array());
     }
 
@@ -70,46 +52,20 @@ class FileLocator extends BaseFileLocator
      * @param string $theme
      * @param string $deviceType
      */
-    public function setCurrentTheme($theme, $deviceType)
+    public function setCurrentTheme($theme, string $deviceType = null)
     {
-        $this->lastTheme = $theme;
         $paths = $this->basePaths;
-        // add active theme as Resources/themes/views folder as well.
         $paths[] = $this->path.'/themes/'.$theme;
         $paths[] = $this->path;
-
         $this->paths = $paths;
     }
 
-    /**
-     * Returns the file path for a given resource for the first directory it
-     * has a match.
-     *
-     * The resource name must follow the following pattern:
-     *
-     *     "@BundleName/path/to/a/file.something"
-     *
-     * where BundleName is the name of the bundle
-     * and the remaining part is the relative path in the bundle.
-     *
-     * @param string $name  A resource name to locate
-     * @param string $dir   A directory where to look for the resource first
-     * @param bool   $first Whether to return the first path or paths for all matching bundles
-     *
-     * @return string|array The absolute path of the resource or an array if $first is false
-     *
-     * @throws \InvalidArgumentException if the file cannot be found or the name is not valid
-     * @throws \RuntimeException         if the name contains invalid/unsafe characters
-     */
+
     public function locate($name, $dir = null, $first = true)
     {
-        // update the paths if the theme changed since the last lookup
-        $theme = $this->activeTheme->getName();
 
-        if ($this->lastTheme !== $theme) {
-            $this->setCurrentTheme($theme, $this->activeTheme->getDeviceType());
-        }
-
+        $themeName = $this->theme->getTheme();
+        $this->setCurrentTheme($themeName);
         if ('@' === $name[0]) {
             return $this->locateBundleResource($name, $this->path, $first);
         }
@@ -119,31 +75,18 @@ class FileLocator extends BaseFileLocator
                 return $res;
             }
         }
-
         return parent::locate($name, $dir, $first);
     }
 
-    /**
-     * Locate Resource Theme aware. Only working for bundle resources!
-     *
-     * Method inlined from Symfony\Component\Http\Kernel
-     *
-     * @param string $name
-     * @param string $dir
-     * @param bool   $first
-     *
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
-     *
-     * @return string
-     */
     protected function locateBundleResource($name, $dir = null, $first = true)
     {
+
         if (false !== strpos($name, '..')) {
             throw new \RuntimeException(sprintf('File name "%s" contains invalid characters (..).', $name));
         }
-
+  
         $bundleName = substr($name, 1);
+        
         $path = '';
         if (false !== strpos($bundleName, '/')) {
             list($bundleName, $path) = explode('/', $bundleName, 2);
@@ -172,8 +115,8 @@ class FileLocator extends BaseFileLocator
             '%app_path%' => $this->path,
             '%dir%' => $dir,
             '%override_path%' => substr($path, strlen('Resources/')),
-            '%current_theme%' => $this->lastTheme,
-            '%current_device%' => $this->activeTheme->getDeviceType(),
+            '%current_theme%' => $this->theme->getTheme(),
+            '%current_device%' => $this->theme->getDevice(),
             '%template%' => substr($path, strlen('Resources/views/')),
         );
 
@@ -184,7 +127,7 @@ class FileLocator extends BaseFileLocator
             ));
 
             $checkPaths = $this->getPathsForBundleResource($parameters);
-
+           
             foreach ($checkPaths as $checkPath) {
                 if (file_exists($checkPath)) {
                     if (null !== $resourceBundle) {
@@ -219,17 +162,9 @@ class FileLocator extends BaseFileLocator
         throw new \InvalidArgumentException(sprintf('Unable to find file "%s".', $name));
     }
 
-    /**
-     * Locate Resource Theme aware. Only working for app/Resources.
-     *
-     * @param string $name
-     * @param string $dir
-     * @param bool   $first
-     *
-     * @return string|array
-     */
     protected function locateAppResource($name, $dir = null, $first = true)
     {
+
         if (false !== strpos($name, '..')) {
             throw new \RuntimeException(sprintf('File name "%s" contains invalid characters (..).', $name));
         }
@@ -237,12 +172,13 @@ class FileLocator extends BaseFileLocator
         $files = array();
         $parameters = array(
             '%app_path%' => $this->path,
-            '%current_theme%' => $this->lastTheme,
-            '%current_device%' => $this->activeTheme->getDeviceType(),
-            '%template%' => substr($name, strlen('views/')),
+            '%current_theme%' => $this->theme->getTheme(),
+            '%current_device%' => $this->theme->getDevice(),
+            '%template%' => substr($name, strlen('/views')),
         );
 
         foreach ($this->getPathsForAppResource($parameters) as $checkPaths) {
+           
             if (file_exists($checkPaths)) {
                 if ($first) {
                     return $checkPaths;
@@ -264,11 +200,9 @@ class FileLocator extends BaseFileLocator
         }
 
         $pathPatterns = array_merge($pathPatterns, $this->pathPatterns['bundle_resource']);
-
         foreach ($pathPatterns as $pattern) {
             $paths[] = strtr($pattern, $parameters);
         }
-
         return $paths;
     }
 
@@ -279,7 +213,6 @@ class FileLocator extends BaseFileLocator
         foreach ($this->pathPatterns['app_resource'] as $pattern) {
             $paths[] = strtr($pattern, $parameters);
         }
-
         return $paths;
     }
 }

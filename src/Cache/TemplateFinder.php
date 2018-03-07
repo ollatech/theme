@@ -1,73 +1,33 @@
 <?php
-/*
- * This file is part of the Liip/ThemeBundle
- *
- * (c) Liip AG
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
-
 namespace Olla\Theme\Cache;
 
-use Olla\Theme\ActiveTheme;
 use Symfony\Bundle\FrameworkBundle\CacheWarmer\TemplateFinder as BaseTemplateFinder;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Templating\TemplateNameParserInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\Finder\Finder;
+use Olla\Theme\Theme;
 
-/**
- * Finds all templates, including themes.
- *
- * @author Oleg Andreyev <oleg.andreyev@intexsys.lv>
- */
+
 class TemplateFinder extends BaseTemplateFinder
 {
-    /**
-     * @var KernelInterface
-     */
+
     private $kernel;
-
-    /**
-     * @var TemplateNameParserInterface
-     */
     private $parser;
-
-    /**
-     * @var string
-     */
     private $rootDir;
-
-    /**
-     * @var array
-     */
     private $templates;
-
-    /**
-     * @var ActiveTheme
-     */
-    private $activeTheme;
-
-    /**
-     * TemplateFinder constructor.
-     *
-     * @param KernelInterface             $kernel
-     * @param TemplateNameParserInterface $parser
-     * @param string                      $rootDir
-     * @param ActiveTheme                 $activeTheme
-     */
+    private $theme;
     public function __construct(
         KernelInterface $kernel,
         TemplateNameParserInterface $parser,
         $rootDir,
-        ActiveTheme $activeTheme
+        Theme $theme
     ) {
         parent::__construct($kernel, $parser, $rootDir);
         $this->kernel = $kernel;
         $this->parser = $parser;
         $this->rootDir = $rootDir;
-        $this->activeTheme = $activeTheme;
+        $this->theme = $theme;
     }
 
     /**
@@ -75,13 +35,13 @@ class TemplateFinder extends BaseTemplateFinder
      */
     public function findAllTemplates()
     {
+       
+        $themes = $this->theme->getThemes();
         if (null !== $this->templates) {
             return $this->templates;
         }
 
         $templates = parent::findAllTemplates();
-
-        $themes = $this->activeTheme->getThemes();
         foreach ($this->kernel->getBundles() as $bundle) {
             foreach ($themes as $theme) {
                 $templates = array_merge($templates, $this->findTemplatesInThemes($bundle, $theme));
@@ -103,11 +63,9 @@ class TemplateFinder extends BaseTemplateFinder
     {
         $templates = $this->findTemplatesInFolder($bundle->getPath().'/Resources/themes/'.$theme);
         $name = $bundle->getName();
-
         foreach ($templates as $i => $template) {
             $templates[$i] = $template->set('bundle', $name);
         }
-
         return $templates;
     }
 
@@ -121,7 +79,6 @@ class TemplateFinder extends BaseTemplateFinder
     private function findTemplatesInFolder($dir)
     {
         $templates = array();
-
         if (is_dir($dir)) {
             $finder = new Finder();
             foreach ($finder->files()->followLinks()->in($dir) as $file) {
@@ -131,7 +88,6 @@ class TemplateFinder extends BaseTemplateFinder
                 }
             }
         }
-
         return $templates;
     }
 }

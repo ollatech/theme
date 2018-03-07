@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <meta name="description" content="{%- block description -%}{%- endblock description -%}">
+    <title>{%- block title -%}{%- endblock title -%}</title>
+    <link rel="canonical" href="{%- block canonical -%}{%- endblock canonical -%}">
+    {%- block microdata -%}{%- endblock microdata -%}
+    {%- block fonts -%}{%- endblock fonts -%}
+    {%- block extensions -%}{%- endblock extensions -%}
+
+
+    {% if react and react['js'] %}
+    <script type ="application/javascript" src="{{react['js']}}" ></script>
+    {% endif %}
+    {% if assets %}
+
+    {% for css in assets['css'] %}
+    <link rel="stylesheet" href="{{ asset(css) }}" />
+    {% endfor %}
+
+    {% for js in assets['js'] %}
+    <script src="{{ asset(js) }}" ></script>
+    {% endfor %}
+
+    {% endif %}
+
+
+ 
+   
+</head>
+<body class="body">
+    {% block reactjs %}
+    {% if react and react['js'] and react['component'] %}
+    {{ react_view(react['component'], {'props': props, 'context': context, 'options': options, 'server': react['server']}) }}
+    {% endif %}
+    {% endblock %}
+    {%- block body -%}{%- endblock body -%}
+</body>
+</html>

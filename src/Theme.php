@@ -2,7 +2,7 @@
 
 namespace Olla\Theme;
 
-class ActiveTheme
+class Theme
 {
     /**
      * @var string
@@ -34,6 +34,15 @@ class ActiveTheme
     public function setThemes(array $themes)
     {
         $this->themes = $themes;
+    }
+    public function getTheme()
+    {
+        return $this->name;
+    }
+
+     public function getDevice()
+    {
+        return;
     }
 
     public function getName()

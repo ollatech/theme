@@ -24,39 +24,52 @@ final class OllaThemeExtension extends Extension implements PrependExtensionInte
     }
     public function load(array $configs, ContainerBuilder $container)
     {
-        $this->reconfig($configs, $container);
+     
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('theme.xml');
         $loader->load('twig.xml');
+        $this->reconfig($configs, $container);
     }
     private function reconfig(array $configs, ContainerBuilder $container) {
 
         $config = $this->processConfiguration(new Configuration(), $configs);
-        foreach (array('themes', 'active_theme', 'path_patterns', 'cache_warming') as $key) {
-            $container->setParameter($this->getAlias().'.'.$key, $config[$key]);
+        foreach (array('path_patterns') as $key) {
+           $container->setParameter($this->getAlias().'.'.$key, $config[$key]);
         }
-        
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $options = null;
-        if (!empty($config['cookie']['name'])) {
-            $options = array();
-            foreach (array('name', 'lifetime', 'path', 'domain', 'secure', 'http_only') as $key) {
-                $options[$key] = $config['cookie'][$key];
+        //themes
+        $themes = ['default'];
+        if($config['themes']) {
+            $themes = array_merge($themes, $config['themes']);
+        }
+        $container->setParameter('olla_theme.themes', $themes);
+        //active theme
+        $active_theme = 'default';
+        if($config['active_theme']) {
+            $active_theme = $config['active_theme'];
+        }
+        $container->setParameter('olla_theme.active_theme', $active_theme);
+        //js & css
+        $assets = [];
+        if($config['assets']) {
+            $js = [];
+            $css = [];
+            $rawAssets = $config['assets'];
+            if(isset($rawAssets['js'])) {
+                $js = $rawAssets['js'];
             }
+            if(isset($rawAssets['css'])) {
+                $css = $rawAssets['css'];
+            }
+            $assets = array_merge($assets, [
+                'js' => $js,
+                'css' => $css
+            ]);
         }
-
-        $container->setParameter($this->getAlias().'.cookie', $options);
-       
-        if (!empty($config['device_detection'])) {
-            $container->setAlias('liip_theme.theme_auto_detect', $config['device_detection']);
+        $container->setParameter('olla_theme.assets', $assets);
+        $default_template = '@OllaTheme/app.html.twig';
+        if($config['default_template']) {
+            $default_template = $config['default_template'];
         }
-        if (!empty($config['autodetect_theme'])) {
-            $id = is_string($config['autodetect_theme']) ? $config['autodetect_theme'] : 'liip_theme.theme_auto_detect';
-            $container->getDefinition($this->getAlias().'.theme_request_listener')
-            ->addArgument(new Reference($id));
-        }
-        if (true === $config['assetic_integration']) {
-            $container->setParameter('liip_theme.assetic_integration', true);
-        }
+        $container->setParameter('olla_theme.default_template', $default_template);
     }
 }

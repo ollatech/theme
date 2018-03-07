@@ -14,7 +14,6 @@ namespace Olla\Theme\Cache;
 use Symfony\Bundle\FrameworkBundle\CacheWarmer\TemplatePathsCacheWarmer as BaseTemplatePathsCacheWarmer;
 use Symfony\Bundle\FrameworkBundle\Templating\Loader\TemplateLocator;
 use Symfony\Bundle\FrameworkBundle\CacheWarmer\TemplateFinderInterface;
-use Olla\Theme\ActiveTheme;
 use Symfony\Component\Templating\TemplateReferenceInterface;
 
 class TemplatePathsCacheWarmer extends BaseTemplatePathsCacheWarmer
@@ -29,16 +28,9 @@ class TemplatePathsCacheWarmer extends BaseTemplatePathsCacheWarmer
      */
     protected $locator;
 
-    /**
-     * Constructor.
-     *
-     * @param TemplateFinderInterface $finder      A template finder
-     * @param TemplateLocator         $locator     The template locator
-     * @param ActiveTheme             $activeTheme
-     */
-    public function __construct(TemplateFinderInterface $finder, TemplateLocator $locator, ActiveTheme $activeTheme = null)
+
+    public function __construct(TemplateFinderInterface $finder, TemplateLocator $locator)
     {
-        $this->activeTheme = $activeTheme;
         parent::__construct($finder, $locator);
     }
 
