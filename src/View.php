@@ -5,7 +5,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Twig\Environment as TwigEnvironment;
 
-final class View {
+final class View implements ThemeInterface{
 
     protected $twig;
 	protected $context;
