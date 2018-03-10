@@ -67,8 +67,23 @@ class FileLocator extends BaseFileLocator
         $themeName = $this->theme->getTheme();
         $this->setCurrentTheme($themeName);
         if ('@' === $name[0]) {
-            return $this->locateBundleResource($name, $this->path, $first);
+            $view = $this->locateBundleResource($name, $this->path, $first);
+            if($view) {
+                return $view;
+            } else {
+                $module = explode("/", $name);
+                $patterns = array();
+                $patterns[0] = '/'.$module[0].'\//';
+                $patterns[1] = '/::/';
+                $patterns[2] = '//';
+                $replacements = array();
+                $replacements[2] = '';
+                $replacements[1] = '';
+                $replacements[0] = '';
+                $name = preg_replace($patterns, $replacements, $name);
+            }
         }
+    
 
         if (0 === strpos($name, 'views/')) {
             if ($res = $this->locateAppResource($name, $this->path, $first)) {
@@ -84,9 +99,9 @@ class FileLocator extends BaseFileLocator
         if (false !== strpos($name, '..')) {
             throw new \RuntimeException(sprintf('File name "%s" contains invalid characters (..).', $name));
         }
-  
+
         $bundleName = substr($name, 1);
-        
+
         $path = '';
         if (false !== strpos($bundleName, '/')) {
             list($bundleName, $path) = explode('/', $bundleName, 2);
@@ -105,6 +120,7 @@ class FileLocator extends BaseFileLocator
 
         $resourceBundle = null;
         $bundles = $this->kernel->getBundle($bundleName, false, true);
+
         // Symfony 4+ no longer supports inheritance and so we only get a single bundle
         if (!is_array($bundles)) {
             $bundles = array($bundles);
@@ -127,7 +143,7 @@ class FileLocator extends BaseFileLocator
             ));
 
             $checkPaths = $this->getPathsForBundleResource($parameters);
-           
+
             foreach ($checkPaths as $checkPath) {
                 if (file_exists($checkPath)) {
                     if (null !== $resourceBundle) {
@@ -146,6 +162,7 @@ class FileLocator extends BaseFileLocator
             }
 
             $file = $bundle->getPath().'/'.$path;
+
             if (file_exists($file)) {
                 if ($first) {
                     return $file;
@@ -158,8 +175,6 @@ class FileLocator extends BaseFileLocator
         if (count($files) > 0) {
             return $first ? $files[0] : $files;
         }
-
-        throw new \InvalidArgumentException(sprintf('Unable to find file "%s".', $name));
     }
 
     protected function locateAppResource($name, $dir = null, $first = true)
@@ -178,7 +193,7 @@ class FileLocator extends BaseFileLocator
         );
 
         foreach ($this->getPathsForAppResource($parameters) as $checkPaths) {
-           
+
             if (file_exists($checkPaths)) {
                 if ($first) {
                     return $checkPaths;

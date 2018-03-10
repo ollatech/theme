@@ -13,7 +13,6 @@ class ThemeLoader extends \Twig_Loader_Filesystem
     protected $parser;
     protected $theme;
 
-
     public function __construct(FileLocatorInterface $locator, TemplateNameParserInterface $parser, $rootPath = null)
     {
         parent::__construct(array(), $rootPath);
@@ -40,12 +39,9 @@ class ThemeLoader extends \Twig_Loader_Filesystem
 
         try {
             $templateReference = $this->parser->parse($template);
-            
             $file = $this->locator->locate($templateReference);
         } catch (\Exception $e) {
             $previous = $e;
-
-            // for BC
             try {
                 $file = parent::findTemplate((string) $template);
             } catch (\Twig_Error_Loader $e) {

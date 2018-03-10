@@ -5,12 +5,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Twig\Environment as TwigEnvironment;
 
-final class View implements ThemeInterface{
+final class View implements ThemeInterface {
 
     protected $twig;
 	protected $context;
     protected $assets;
     protected $template;
+    protected $theme;
 
 	public function __construct(TwigEnvironment $twig, Context $context, array $assets = [], string $template) {
         $this->twig = $twig;
@@ -18,6 +19,11 @@ final class View implements ThemeInterface{
         $this->assets = $assets;
         $this->template = $template;
 	}
+
+    public function setTheme($theme) {
+        $this->theme = $theme;
+        return $this;
+    }
     /**
      * metadata:
      **/

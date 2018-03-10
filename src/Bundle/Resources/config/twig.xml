@@ -45,6 +45,7 @@
             <argument type="service" id="olla_theme.theme" />
         </service>
         <service id="olla_theme.theme" class="Olla\Theme\Theme">
+            <argument type="service" id="request_stack" />
             <argument>%olla_theme.active_theme%</argument>
             <argument>%olla_theme.themes%</argument>
         </service>

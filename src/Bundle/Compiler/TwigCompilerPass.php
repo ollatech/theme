@@ -15,15 +15,11 @@ class TwigCompilerPass implements CompilerPassInterface
         $fileSystemDefinition = $container->getDefinition('twig.loader.filesystem');
         $fileSystemDefinition->setClass($container->getParameter('olla_theme.filesystem_loader.class'));
         $fileSystemDefinition->addMethodCall('setTheme', array(new Reference('olla_theme.theme')));
-
-
 		if (!$container->hasDefinition('assetic.asset_manager')) {
 			return;
 		}
 
-
 		$engines = $container->getParameter('templating.engines');
-        // bundle and kernel resources
 		$bundles = $container->getParameter('kernel.bundles');
 		$asseticBundles = $container->getParameterBag()->resolveValue($container->getParameter('assetic.bundles'));
 		
@@ -63,7 +59,6 @@ class TwigCompilerPass implements CompilerPassInterface
 			$themes[$key] = $container->getParameter('kernel.project_dir').'/templates/themes/'.$theme;
 		}
 		$themes[] = $container->getParameter('kernel.project_dir').'/templates/views';
-
 		$container->setDefinition(
 			'assetic.'.$engine.'_directory_resource.kernel',
 			new DirectoryResourceDefinition('', $engine, $themes)

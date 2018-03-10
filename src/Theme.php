@@ -2,27 +2,39 @@
 
 namespace Olla\Theme;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+
 class Theme
 {
+    protected $requestStack;
     /**
      * @var string
      */
-    private $name;
+    protected $name;
 
     /**
      * @var array
      */
-    private $themes;
+    protected $themes;
 
     /**
      * @param string                          $name
      * @param array                           $themes
      */
-    public function __construct($name, array $themes = array())
+    public function __construct(RequestStack $requestStack, $name, array $themes = array())
     {
+        $this->requestStack = $requestStack;
         $this->setThemes($themes);
         if ($name) {
             $this->setName($name);
+        }
+    }
+
+    public function sessionTheme()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if( $request && null !== $theme = $request->attributes->get('_theme')) {
+            return $theme;
         }
     }
 
@@ -37,6 +49,9 @@ class Theme
     }
     public function getTheme()
     {
+        if(null !== $theme = $this->sessionTheme()) {
+            return $theme;
+        }
         return $this->name;
     }
 
