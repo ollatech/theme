@@ -1,78 +1,66 @@
 <?php
-
 namespace Olla\Theme;
 
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment as TwigEnvironment;
 
-class Theme
-{
+final class Theme implements ThemeInterface {
+
+    protected $twig;
+    protected $assets;
+    protected $template;
+    protected $theme;
     protected $requestStack;
-    /**
-     * @var string
-     */
-    protected $name;
 
-    /**
-     * @var array
-     */
-    protected $themes;
-
-    /**
-     * @param string                          $name
-     * @param array                           $themes
-     */
-    public function __construct(RequestStack $requestStack, $name, array $themes = array())
-    {
+	public function __construct(RequestStack $requestStack, TwigEnvironment $twig, array $assets = [], string $template) {
         $this->requestStack = $requestStack;
-        $this->setThemes($themes);
-        if ($name) {
-            $this->setName($name);
+        $this->twig = $twig;
+        $this->assets = $assets;
+        $this->template = $template;
+	}
+
+    public function setTheme($theme) {
+        $this->theme = $theme;
+        return $this;
+    }
+    /**
+     * metadata:
+     **/
+    public function render(string $template = null, array $props = [], array $assets = [], array $react = [], array $options = [], array $context = []) {
+        if(!$template) {
+            $template  = $this->template;
         }
+        $payload = [
+            'context' => array_merge([
+                'resource' => null,
+                'operation' => null,
+            ], $context, $this->context()),
+            'props' => $props,
+            'react' => array_merge([
+                'js' => null,
+                'component' => 'app',
+                'server' => false
+            ],$react),
+            'options' => $options,
+            'assets' => array_merge($this->assets, $assets),
+        ];
+        return  Response::create($this->twig->render($template, $payload));
     }
 
-    public function sessionTheme()
+    public function context()
     {
         $request = $this->requestStack->getCurrentRequest();
-        if( $request && null !== $theme = $request->attributes->get('_theme')) {
-            return $theme;
-        }
-    }
-
-    public function getThemes()
-    {
-        return (array) $this->themes;
-    }
-
-    public function setThemes(array $themes)
-    {
-        $this->themes = $themes;
-    }
-    public function getTheme()
-    {
-        if(null !== $theme = $this->sessionTheme()) {
-            return $theme;
-        }
-        return $this->name;
-    }
-
-     public function getDevice()
-    {
-        return;
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    public function setName($name)
-    {
-        if (!in_array($name, $this->themes)) {
-            throw new \InvalidArgumentException(sprintf(
-                'The active theme "%s" must be in the themes list (%s)',
-                $name, implode(',', $this->themes)
-            ));
-        }
-        $this->name = $name;
+        return [
+            'href' => $request->getSchemeAndHttpHost().$request->getRequestUri(),
+            'location' => $request->getRequestUri(),
+            'scheme' => $request->getScheme(),
+            'host' => $request->getHost(),
+            'port' => $request->getPort(),
+            'base' => $request->getBaseUrl(),
+            'pathname' => $request->getPathInfo(),
+            'search' => $request->getQueryString(),
+        ];
     }
 }
+

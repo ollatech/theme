@@ -1,10 +1,8 @@
 <?php
-namespace Olla\Theme\Twig;
+namespace Olla\Theme\Extension;
 
 class ReactExtension extends \Twig_Extension
 {
- 
-
     public function getFunctions()
     {
         return array(

@@ -5,7 +5,7 @@ namespace Olla\Theme\Locator;
 
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Config\FileLocator as BaseFileLocator;
-use Olla\Theme\Theme;
+use Olla\Theme\ActiveTheme;
 
 class FileLocator extends BaseFileLocator
 {
@@ -22,7 +22,7 @@ class FileLocator extends BaseFileLocator
         $path = null,
         array $paths = array(),
         array $pathPatterns = array(),
-        Theme $theme
+        ActiveTheme $theme
     ) {
         $this->kernel = $kernel;
         $this->path = $path;

@@ -6,7 +6,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Templating\TemplateNameParserInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\Finder\Finder;
-use Olla\Theme\Theme;
+use Olla\Theme\ActiveTheme;
 
 
 class TemplateFinder extends BaseTemplateFinder
@@ -21,7 +21,7 @@ class TemplateFinder extends BaseTemplateFinder
         KernelInterface $kernel,
         TemplateNameParserInterface $parser,
         $rootDir,
-        Theme $theme
+        ActiveTheme $theme
     ) {
         parent::__construct($kernel, $parser, $rootDir);
         $this->kernel = $kernel;

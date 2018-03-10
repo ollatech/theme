@@ -1,11 +1,11 @@
 <?php
 
-namespace Olla\Theme\Twig;
+namespace Olla\Theme\Loader;
 
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Templating\TemplateNameParserInterface;
 use Symfony\Component\Templating\TemplateReferenceInterface;
-use Olla\Theme\Theme;
+use Olla\Theme\ActiveTheme;
 
 class ThemeLoader extends \Twig_Loader_Filesystem
 {
@@ -20,7 +20,7 @@ class ThemeLoader extends \Twig_Loader_Filesystem
         $this->parser = $parser;
     }
 
-    public function setTheme(Theme $theme) {
+    public function setTheme(ActiveTheme $theme) {
         $this->theme = $theme;
     }
 
