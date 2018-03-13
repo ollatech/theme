@@ -10,25 +10,18 @@
     {%- block fonts -%}{%- endblock fonts -%}
     {%- block extensions -%}{%- endblock extensions -%}
 
+    {% for css in styles %}
+    <link rel="stylesheet" href="{{ asset(css) }}" />
+    {% endfor %}
+
+    {% for js in javascripts %}
+    <script src="{{ asset(js) }}" ></script>
+    {% endfor %}
 
     {% if react and react['js'] %}
     <script type ="application/javascript" src="{{react['js']}}" ></script>
     {% endif %}
-    {% if assets %}
 
-    {% for css in assets['css'] %}
-    <link rel="stylesheet" href="{{ asset(css) }}" />
-    {% endfor %}
-
-    {% for js in assets['js'] %}
-    <script src="{{ asset(js) }}" ></script>
-    {% endfor %}
-
-    {% endif %}
-
-
- 
-   
 </head>
 <body class="body">
     {% block reactjs %}

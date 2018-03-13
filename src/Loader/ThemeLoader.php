@@ -26,11 +26,15 @@ class ThemeLoader extends \Twig_Loader_Filesystem
 
     protected function findTemplate($template, $throw = true)
     {
+       
         $logicalName = (string) $template;
-        if ($this->activeTheme) {
-            $logicalName .= '|'.$this->activeTheme->getTheme();
+        if ($this->activeTheme->theme()) {
+            $logicalName .= '|'.$this->activeTheme->theme()->name();
         }
-        
+        if ($this->activeTheme->device()) {
+            $logicalName .= '|'.$this->activeTheme->device();
+        }
+
         if (isset($this->cache[$logicalName])) {
             return $this->cache[$logicalName];
         }

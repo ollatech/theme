@@ -57,11 +57,11 @@ class FileLocator extends BaseFileLocator
 
     protected function pathPatterns() {
         $currentTheme = $this->activeTheme->get();
-        return array_merge_recursive($this->pathPatterns, $currentTheme->paths());
+        return array_merge_recursive($currentTheme->paths(), $this->pathPatterns);
     }
+
     public function locate($name, $dir = null, $first = true)
     {
-
         if(null !== $theme = $this->currentTheme()) {
             if(null !== $template = $this->locateAppTemplate($theme, $name, $dir, $first)) {
                 return $template;
@@ -72,12 +72,12 @@ class FileLocator extends BaseFileLocator
                 return $template;
             }
         }
-        
-
+    
         return parent::locate($name, $dir, $first);
     }
 
     public function locateAppTemplate($theme, $template, $dir = null, $first = true) {
+
         if (0 === strpos($template, 'views/')) {
             $patterns[1] = '/Resources\//';
             $patterns[2] = '/Templates\//';
@@ -88,6 +88,7 @@ class FileLocator extends BaseFileLocator
             $replacements[1] = '';
             $template = preg_replace($patterns, $replacements, $template);
         }
+
         // 1. Get from main template
         $parameters = array(
             '%app_path%' => $this->path,
@@ -95,6 +96,7 @@ class FileLocator extends BaseFileLocator
             '%current_device%' => $this->activeTheme->device(),
             '%template%' => $template,
         );
+
         $templates = $this->getPaths('app_resource', $parameters);
         $file = $this->getTemplate($templates);
         if($file) {
@@ -116,7 +118,6 @@ class FileLocator extends BaseFileLocator
             if (false !== strpos($template, '..')) {
                 throw new \RuntimeException(sprintf('File name "%s" contains invalid characters (..).', $template));
             }
-
             $bundleName = substr($template, 1);
             $path = '';
             if (false !== strpos($bundleName, '/')) {
@@ -131,7 +132,6 @@ class FileLocator extends BaseFileLocator
             if (0 !== strpos($path, 'Resources')) {
                 throw new \RuntimeException('Template files have to be in Resources.');
             }
-
             $parameters = array(
                 '%app_path%' => $this->path,
                 '%bundle_name%' => $bundleName,
@@ -145,9 +145,6 @@ class FileLocator extends BaseFileLocator
                 return $file;
             }
         }
-        // 3. get from bundle itself
-
-        // 4. get from default bundle
     }
 
     public function locateBundleTemplate($template, $dir = null, $first = true) {

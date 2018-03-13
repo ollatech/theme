@@ -19,7 +19,6 @@ class ThemeRegistry
     }
 
     public function has(string $name) {
- 
         if(isset($this->themes[$name])) {
             return true;
         }

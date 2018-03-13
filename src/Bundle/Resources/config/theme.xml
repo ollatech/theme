@@ -7,7 +7,13 @@
         <parameter key="olla_theme.filesystem_loader.class">Olla\Theme\Loader\ThemeLoader</parameter>
     </parameters>
     <services>
+        <service id="olla_theme.theme_asset" class="Olla\Theme\ThemeAsset">
+            <argument type="service" id="cache.app" />
+            <argument>%kernel.project_dir%</argument>
+            <argument type="service" id="olla_theme.active_theme" />
+        </service>
         <service id="olla.theme" class="Olla\Theme\Theme">
+            <argument type="service" id="olla_theme.theme_asset" />
             <argument type="service" id="olla_theme.active_theme" />
             <argument type="service" id="request_stack" />
             <argument type="service" id="twig" />
