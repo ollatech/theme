@@ -8,6 +8,7 @@
     </parameters>
     <services>
         <service id="olla.theme" class="Olla\Theme\Theme">
+            <argument type="service" id="olla_theme.active_theme" />
             <argument type="service" id="request_stack" />
             <argument type="service" id="twig" />
             <argument>%olla_theme.assets%</argument>
@@ -27,8 +28,8 @@
         <service id="templating.finder" class="Olla\Theme\Cache\TemplateFinder">
             <argument type="service" id="kernel" />
             <argument type="service" id="templating.filename_parser" />
-            <argument>%kernel.project_dir%/templates</argument>
-            <argument type="service" id="olla_theme.theme" />
+            <argument>%kernel.project_dir%</argument>
+            <argument type="service" id="olla_theme.active_theme" />
         </service>
 
         <service id="olla_theme.templating_locator" class="Olla\Theme\Locator\TemplateLocator">
@@ -38,12 +39,13 @@
 
         <service id="olla_theme.file_locator" class="Olla\Theme\Locator\FileLocator">
             <argument type="service" id="kernel" />
-            <argument>%kernel.project_dir%/templates</argument>
+            <argument>%kernel.project_dir%</argument>
             <argument type="collection" />
             <argument>%olla_theme.path_patterns%</argument>
-            <argument type="service" id="olla_theme.theme" />
+            <argument type="service" id="olla_theme.active_theme" />
         </service>
-        <service id="olla_theme.theme" class="Olla\Theme\ActiveTheme">
+        <service id="olla_theme.active_theme" class="Olla\Theme\ActiveTheme">
+            <argument type="service" id="olla_theme.registry" />
             <argument type="service" id="request_stack" />
             <argument>%olla_theme.active_theme%</argument>
             <argument>%olla_theme.themes%</argument>

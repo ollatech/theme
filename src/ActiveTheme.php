@@ -3,9 +3,12 @@
 namespace Olla\Theme;
 
 use Symfony\Component\HttpFoundation\RequestStack;
+use Olla\Theme\ThemeRegistry;
 
 class ActiveTheme
 {
+    protected $themeRegistry;
+
     protected $requestStack;
     /**
      * @var string
@@ -15,19 +18,55 @@ class ActiveTheme
     /**
      * @var array
      */
-    protected $themes;
+    protected $themes = [];
 
     /**
      * @param string                          $name
      * @param array                           $themes
      */
-    public function __construct(RequestStack $requestStack, $name, array $themes = array())
+    public function __construct(ThemeRegistry $themeRegistry, RequestStack $requestStack, $name, array $themes = array())
     {
+        $this->themeRegistry = $themeRegistry;
         $this->requestStack = $requestStack;
-        $this->setThemes($themes);
-        if ($name) {
-            $this->setName($name);
+    }
+
+
+
+    public function theme() {
+        $active_theme = $this->activeTheme();
+  
+        if($active_theme) {
+            if($this->themeRegistry->has($active_theme)) {
+                return $this->themeRegistry->get($active_theme);
+            }
+            throw new \InvalidArgumentException(sprintf(
+                'The active theme "%s" must be in the themes list (%s)', $active_theme, implode(',', array_keys($this->themeRegistry->all()))
+            ));
         }
+
+    }
+    public function activeTheme()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if( $request && null !== $theme = $request->attributes->get('_theme')) {
+            return $theme;
+        }
+    }
+
+    public function path() {
+        if($this->get()) {
+            return 'black_theme';
+        }
+    }
+
+    public function device() {
+        return 'desktop';
+    }
+
+
+
+    public function themes() {
+        return $this->themeRegistry->allThemes();
     }
 
     public function sessionTheme()
@@ -37,6 +76,8 @@ class ActiveTheme
             return $theme;
         }
     }
+
+    
 
     public function getThemes()
     {
@@ -55,7 +96,7 @@ class ActiveTheme
         return $this->name;
     }
 
-     public function getDevice()
+    public function getDevice()
     {
         return;
     }
@@ -67,10 +108,10 @@ class ActiveTheme
 
     public function setName($name)
     {
-        if (!in_array($name, $this->themes)) {
+        if (!array_key_exists($name, $this->themeRegistry->allThemes())) {
+
             throw new \InvalidArgumentException(sprintf(
-                'The active theme "%s" must be in the themes list (%s)',
-                $name, implode(',', $this->themes)
+                'The active theme "%s" must be in the themes list (%s)', $name, implode(',', array_keys($this->themeRegistry->allThemes()))
             ));
         }
         $this->name = $name;

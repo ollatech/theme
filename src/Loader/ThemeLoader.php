@@ -11,7 +11,7 @@ class ThemeLoader extends \Twig_Loader_Filesystem
 {
     protected $locator;
     protected $parser;
-    protected $theme;
+    protected $activeTheme;
 
     public function __construct(FileLocatorInterface $locator, TemplateNameParserInterface $parser, $rootPath = null)
     {
@@ -20,16 +20,17 @@ class ThemeLoader extends \Twig_Loader_Filesystem
         $this->parser = $parser;
     }
 
-    public function setTheme(ActiveTheme $theme) {
-        $this->theme = $theme;
+    public function setTheme(ActiveTheme $activeTheme) {
+        $this->activeTheme = $activeTheme;
     }
 
     protected function findTemplate($template, $throw = true)
     {
         $logicalName = (string) $template;
-        if ($this->theme) {
-            $logicalName .= '|'.$this->theme->getTheme();
+        if ($this->activeTheme) {
+            $logicalName .= '|'.$this->activeTheme->getTheme();
         }
+        
         if (isset($this->cache[$logicalName])) {
             return $this->cache[$logicalName];
         }
@@ -53,7 +54,6 @@ class ThemeLoader extends \Twig_Loader_Filesystem
             if ($throw) {
                 throw new \Twig_Error_Loader(sprintf('Unable to find template "%s".', $logicalName), -1, null, $previous);
             }
-            
             return false;
         }
         return $this->cache[$logicalName] = $file;
